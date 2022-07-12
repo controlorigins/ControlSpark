@@ -36,6 +36,6 @@ public class PageController : BaseController
         BaseVM.MetaDescription = page?.Description ?? "Page Not Found";
         BaseVM.MetaKeywords = page?.Action ?? "Page Not Found";
 
-        return View($"~/Views/Templates/{BaseVM.Template}/Default.cshtml", BaseVM);
+        return View($"~/Views/Templates/{BaseVM.Template}/Page/Default.cshtml", BaseVM);
     }
 }
