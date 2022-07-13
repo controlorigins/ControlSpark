@@ -40,7 +40,7 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             VersionNo = domain.VersionNo,
             Menu = Create(domain.Menus, false)
         };
-        item.Menu.AddRange(CreateRecipeMenu(domain.Recipes));
+        item.Menu.AddRange(CreateRecipeMenu());
         return item;
     }
     /// <summary>
@@ -216,14 +216,12 @@ public class WebsiteProvider : IWebsiteService, IDisposable
             WebsiteName = domain.Name,
             WebsiteStyle = domain.Style,
             Template = domain.Template,
-            CategoryList = new List<RecipeCategoryModel>(),
             MetaDescription = domain.Description,
             MetaKeywords = "TODO",
             PageTitle = domain.Title,
-            RecipeList = Create(domain.Recipes),
             Menu = Create(domain.Menus, false),
         };
-        item.Menu.AddRange(CreateRecipeMenu(domain.Recipes));
+        item.Menu.AddRange(CreateRecipeMenu());
         return item;
     }
 
@@ -233,8 +231,10 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <param name="list">The list.</param>
     /// <param name="DomainID">The domain identifier.</param>
     /// <returns>List&lt;MenuModel&gt;.</returns>
-    private List<MenuModel> CreateRecipeMenu(ICollection<Recipe> list)
+    private List<MenuModel> CreateRecipeMenu()
     {
+        var list = _context.Recipe.Include(i => i.RecipeCategory).ToList();
+
         return list == null ? new List<MenuModel>() : list.Select(item => GetMenuItem(item)).OrderBy(x => x.DisplayOrder).ToList();
     }
     /// <summary>
@@ -299,7 +299,6 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     {
         var returnMenu = Create(await _context.Set<WebSite>()
             .Where(w => w.Id == id)
-            .Include(i => i.Recipes).ThenInclude(i => i.RecipeCategory)
             .Include(i => i.Menus).FirstOrDefaultAsync());
         if (returnMenu == null)
             returnMenu = new WebsiteModel();
@@ -312,16 +311,14 @@ public class WebsiteProvider : IWebsiteService, IDisposable
     /// <param name="host"></param>
     /// <param name="defaultSiteId"></param>
     /// <returns></returns>
-    public async Task<WebsiteVM> GetBaseViewByHostAsync(string host, string? defaultSiteId = null)
+    public async Task<WebsiteVM> GetBaseViewByHostAsync(string host, string defaultSiteId = null)
     {
         var bvm = CreateBaseView(await _context.Domain.Where(w => w.DomainUrl.ToLower().Contains(host.ToLower()))
-            .Include(i => i.Recipes).ThenInclude(i => i.RecipeCategory)
             .Include(i => i.Menus).FirstOrDefaultAsync());
 
         if (bvm.WebsiteId == 0)
         {
             bvm = CreateBaseView(await _context.Domain.Where(w => host.ToLower().Contains(w.Name.ToLower()))
-                .Include(i => i.Recipes).ThenInclude(i => i.RecipeCategory)
                 .Include(i => i.Menus).FirstOrDefaultAsync());
         }
 
@@ -336,20 +333,16 @@ public class WebsiteProvider : IWebsiteService, IDisposable
 
 
             bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == siteId)
-                .Include(i => i.Recipes).ThenInclude(i => i.RecipeCategory)
                 .Include(i => i.Menus).FirstOrDefaultAsync());
         }
-        bvm.CategoryList = Create(await _context.RecipeCategory.ToListAsync());
         return bvm;
     }
 
     public async Task<WebsiteVM> GetBaseViewModelAsync(int id)
     {
         var bvm = CreateBaseView(await _context.Domain.Where(w => w.Id == id)
-            .Include(i => i.Recipes).ThenInclude(i => i.RecipeCategory)
             .Include(i => i.Menus).FirstOrDefaultAsync());
 
-        bvm.CategoryList = Create(await _context.RecipeCategory.ToListAsync());
         return bvm;
     }
 

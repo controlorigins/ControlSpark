@@ -6,7 +6,6 @@ public partial class WebSite : BaseEntity
     public WebSite()
     {
         Menus = new HashSet<Menu>();
-        Recipes = new HashSet<Recipe>();
     }
 
     [Key]
@@ -24,5 +23,4 @@ public partial class WebSite : BaseEntity
     public string Style { get; set; }
 
     public virtual ICollection<Menu> Menus { get; set; }
-    public virtual ICollection<Recipe> Recipes { get; set; }
 }

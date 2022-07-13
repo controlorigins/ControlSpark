@@ -1,3 +1,9 @@
+using ControlSpark.Bootswatch.Provider;
+using ControlSpark.RecipeManager.Interfaces;
+using ControlSpark.RecipeManager.ViewModels;
+using ControlSpark.Web.Extensions;
+using System.Text.Json;
+
 namespace ControlSpark.Web.Controllers;
 
 /// <summary>
@@ -5,15 +11,41 @@ namespace ControlSpark.Web.Controllers;
 /// </summary>
 public class RecipeController : BaseController
 {
-    private RecipeVM viewModel;
+    private RecipeVM? _viewModel;
+    public const string RecipeViewKey = "RecipeViewKey";
+    private readonly IRecipeService _recipeProvider;
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="configuration"></param>
-    public RecipeController(ILogger<PageController> logger, IConfiguration config, IWebsiteService websiteService)
+    public RecipeController(ILogger<PageController> logger, IConfiguration config, IWebsiteService websiteService, IRecipeService recipeProvider)
         : base(logger, config, websiteService)
     {
+        _recipeProvider = recipeProvider;
+    }
+
+    private RecipeVM viewModel
+    {
+        get
+        {
+            if (_viewModel == null)
+            {
+                _viewModel = HttpContext.Session.Get<RecipeVM>(RecipeViewKey);
+                _logger.LogInformation("Loaded RecipeView From Session");
+            }
+            if (_viewModel == null)
+            {
+                var _DefaultSiteId = _config.GetValue<string>("DefaultSiteId");
+                var x = HttpContext.Request.Host;
+                var task = Task.Run(() => _recipeProvider.GetRecipeVMHostAsync(HttpContext.Request.Host.Host, _DefaultSiteId, BaseVM));
+                _viewModel = task.GetAwaiter().GetResult();
+
+                HttpContext.Session.SetString(RecipeViewKey, JsonSerializer.Serialize(_viewModel, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }));
+                _logger.LogInformation("Loaded RecipeView From Database");
+            }
+            return _viewModel;
+        }
     }
 
     /// <summary>
@@ -24,8 +56,6 @@ public class RecipeController : BaseController
     [HttpGet]
     public ActionResult Category(string id = null)
     {
-        viewModel = new RecipeVM(BaseVM);
-
         if (!string.IsNullOrEmpty(id))
         {
             viewModel.Category = viewModel.CategoryList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(id)).FirstOrDefault();
@@ -51,8 +81,8 @@ public class RecipeController : BaseController
     [HttpPost]
     public ActionResult Category(RecipeVM recipeVM, string id = null)
     {
-        viewModel = new RecipeVM(BaseVM);
-        viewModel.Category = viewModel.CategoryList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(recipeVM.Category?.Name)).FirstOrDefault();
+        viewModel.Category = viewModel
+            .CategoryList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(recipeVM.Category?.Name)).FirstOrDefault();
         if (viewModel.Category == null)
             return Redirect($"/recipe/category");
 
@@ -66,15 +96,14 @@ public class RecipeController : BaseController
     [HttpGet]
     public ActionResult Index(string id = null)
     {
-        viewModel = new RecipeVM(BaseVM);
-
         if (string.IsNullOrEmpty(id))
         {
             return Redirect($"/recipe/category");
         }
         else
         {
-            viewModel.Recipe = viewModel.RecipeList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(id)).FirstOrDefault();
+            viewModel.Recipe = viewModel.RecipeList
+                .Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(id)).FirstOrDefault();
 
             if (viewModel.Recipe == null)
                 return Redirect($"/recipe");
@@ -98,9 +127,10 @@ public class RecipeController : BaseController
     [HttpPost]
     public ActionResult Index(RecipeVM recipeVM, string id = null)
     {
-        viewModel = new RecipeVM(BaseVM);
-        viewModel.Recipe = viewModel.RecipeList.Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(recipeVM.Recipe?.Name)).FirstOrDefault();
-        if (viewModel.Recipe == null)
+        viewModel.Recipe = viewModel?.RecipeList
+            .Where(w => FormatHelper.GetSafePath(w.Name) == FormatHelper.GetSafePath(recipeVM.Recipe?.Name))
+            .FirstOrDefault();
+        if (viewModel?.Recipe == null)
             return Redirect($"/recipe");
 
         return Redirect(viewModel.Recipe.RecipeURL);

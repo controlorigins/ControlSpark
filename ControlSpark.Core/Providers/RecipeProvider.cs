@@ -1,5 +1,5 @@
-using ControlSpark.Core.Data;
 using ControlSpark.Core.Infrastructure;
+using ControlSpark.RecipeManager.Interfaces;
 
 namespace ControlSpark.Core.Providers;
 
@@ -126,6 +126,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             Description = rc.Comment,
             Id = rc.Id,
             Name = rc.Name,
+            Url = FormatHelper.GetRecipeCategoryURL(rc.Name),
             Recipes = LoadRecipes ? Create(rc.Recipe.ToList()) : new List<RecipeModel>()
         };
     }
@@ -288,7 +289,7 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
     /// <returns>List&lt;RecipeModel&gt;.</returns>
     public IEnumerable<RecipeModel> Get()
     {
-        return Create(_context.Recipe.ToList());
+        return Create(_context.Recipe.Include(r=>r.RecipeCategory).ToList());
     }
 
     /// <summary>
@@ -528,5 +529,15 @@ public class RecipeProvider : IMenuProvider, IRecipeService, IDisposable
             }
         }
         return GetRecipeCategoryById(saveItem.Id);
+    }
+
+    public RecipeVM GetRecipeVMHostAsync(string host, string defaultSiteId, WebsiteVM baseVM)
+    {
+        var recipeVM = new RecipeVM(baseVM)
+        {
+            CategoryList = GetRecipeCategoryList().ToList(),
+            RecipeList = Get().ToList(),
+        };
+        return recipeVM;
     }
 }

@@ -21,11 +21,9 @@ public class BlogVM : WebsiteVM
         WebsiteStyle = website.WebsiteStyle;
         Template = website.Template;
         SiteUrl = website.SiteUrl;
-        CategoryList = website.CategoryList;
         MetaDescription = website.MetaDescription;
         MetaKeywords = website.MetaKeywords;
         PageTitle = website.PageTitle;
-        RecipeList = website.RecipeList;
         Menu = website.Menu;
         StyleList = website.StyleList;
         StyleUrl = website.StyleUrl;

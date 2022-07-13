@@ -48,6 +48,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
     <ProjectReference Include="..\ControlSpark.Domain\ControlSpark.Domain.csproj" />
+    <ProjectReference Include="..\ControlSpark.RecipeManager\ControlSpark.RecipeManager.csproj" />
   </ItemGroup>
 
 </Project>
