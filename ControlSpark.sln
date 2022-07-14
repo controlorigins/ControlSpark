@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Bootswatch", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.Web", "ControlSpark.Web\ControlSpark.Web.csproj", "{3BCC7138-AF77-4FFA-A7D6-4849F8600110}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlSpark.MvcWeb", "ControlSpark.MvcWeb\ControlSpark.MvcWeb.csproj", "{116F367D-75AF-4F5F-BA8C-942537FE71E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3BCC7138-AF77-4FFA-A7D6-4849F8600110}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BCC7138-AF77-4FFA-A7D6-4849F8600110}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BCC7138-AF77-4FFA-A7D6-4849F8600110}.Release|Any CPU.Build.0 = Release|Any CPU
+		{116F367D-75AF-4F5F-BA8C-942537FE71E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{116F367D-75AF-4F5F-BA8C-942537FE71E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{116F367D-75AF-4F5F-BA8C-942537FE71E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{116F367D-75AF-4F5F-BA8C-942537FE71E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
