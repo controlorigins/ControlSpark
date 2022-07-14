@@ -33,4 +33,10 @@
     <ProjectReference Include="..\ControlSpark.SwaggerCore\ControlSpark.SwaggerCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\site\mom\RecipeList.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
