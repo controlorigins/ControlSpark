@@ -146,8 +146,6 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     }
 
 
-
-
     /// <summary>
     /// Gets the menu by identifier.
     /// </summary>
@@ -155,7 +153,10 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// <returns>MenuModel.</returns>
     public MenuModel GetMenuItem(int Id)
     {
-        var returnMenu = Create(_context.Menu.Where(w => w.Id == Id).FirstOrDefault());
+        var returnMenu = Create(_context.Menu.Where(w => w.Id == Id)
+            .Include(i => i.Parent)
+            .Include(i => i.Domain)
+            .FirstOrDefault());
         if (returnMenu == null)
             returnMenu = new MenuModel();
 
@@ -168,7 +169,10 @@ public class MenuProvider : IMenuProvider, IDisposable, IMenuService
     /// <returns>List&lt;MenuModel&gt;.</returns>
     public IEnumerable<MenuModel> GetMenuList()
     {
-        return Create(_context.Menu.OrderBy(o => o.DisplayOrder).ToList());
+        return Create(_context.Menu.OrderBy(o => o.DisplayOrder)
+            .Include(i => i.Parent)
+            .Include(i => i.Domain)
+            .OrderBy(o => o.DisplayOrder).ToList());
     }
 
     /// <summary>

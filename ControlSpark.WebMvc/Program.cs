@@ -6,6 +6,7 @@ using Serilog;
 using ControlSpark.Core.Data;
 using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.Core.Helpers;
+using ControlSpark.WebMvc.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +26,6 @@ var connectionString = builder.Configuration.GetConnectionString("ControlSparkUs
 
 builder.Services.AddDbContext<ControlSparkUserContext>(options =>
     options.UseSqlite(connectionString));;
-
-
 
 builder.Services.AddDefaultIdentity<ControlSparkUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ControlSparkUserContext>();;
@@ -49,33 +48,12 @@ builder.Services.AddScoped<IWebsiteService, WebsiteProvider>();
 builder.Services.AddScoped<IMenuService, MenuProvider>();
 builder.Services.AddScoped<IRecipeService, RecipeProvider>();
 builder.Services.AddScoped<IMenuProvider, MenuProvider>();
-
-
 builder.Services.AddBlogDatabase(config);
 builder.Services.AddBlogProviders();
 
-//var options = new DbContextOptionsBuilder<ControlSparkUserContext>()
-//    .UseSqlite(builder.Configuration["ConnectionStrings:ControlSparkUserContextConnection"])
-//    .EnableSensitiveDataLogging(true)
-//    .Options;
-//using var cmsCtx = new ControlSparkUserContext(options);
-//await cmsCtx.Database.EnsureDeletedAsync();
-//await cmsCtx.Database.EnsureCreatedAsync();
-
-// Setup Database and Seed (TEMP)
-var options = new DbContextOptionsBuilder<AppDbContext>()
-    .UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"])
-    .EnableSensitiveDataLogging(true)
-    .Options;
-using var cmsCtx = new AppDbContext(options);
-await cmsCtx.Database.EnsureDeletedAsync();
-await cmsCtx.Database.EnsureCreatedAsync();
-var seedDatabase = new SeedDatabase(cmsCtx);
-await seedDatabase.SeedDatabaseAsync();
-
-
 
 var app = builder.Build();
+await DbInitializer.SeedAsync(app);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
