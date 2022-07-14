@@ -1,5 +1,6 @@
 using ControlSpark.Core.Data;
 using ControlSpark.Core.Helpers;
+using ControlSpark.RecipeManager.Interfaces;
 using ControlSpark.Web.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,11 @@ Log.Logger = new LoggerConfiguration()
       .Enrich.FromLogContext()
       .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
       .CreateLogger();
+
+
+
+
+
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -59,7 +65,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddMvc()
     .AddApplicationPart(typeof(MarkdownPageProcessorMiddleware).Assembly);
 
-var app = builder.Build();
+// Setup Database and Seed (TEMP)
 var options = new DbContextOptionsBuilder<AppDbContext>()
     .UseSqlite(builder.Configuration["ConnectionStrings:DefaultConnection"])
     .EnableSensitiveDataLogging(true)
@@ -69,6 +75,9 @@ await cmsCtx.Database.EnsureDeletedAsync();
 await cmsCtx.Database.EnsureCreatedAsync();
 var seedDatabase = new SeedDatabase(cmsCtx);
 await seedDatabase.SeedDatabaseAsync();
+
+
+var app = builder.Build();
 app.UseSession();
 app.Use(async (context, next) =>
 {

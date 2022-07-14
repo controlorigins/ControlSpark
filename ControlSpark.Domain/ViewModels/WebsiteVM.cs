@@ -16,12 +16,6 @@ public class WebsiteVM : IBaseViewModel
     public WebsiteVM()
     {
     }
-    /// <summary>
-    /// Gets the category list.
-    /// </summary>
-    /// <value>The category list.</value>
-    [JsonPropertyName("category_list")]
-    public List<RecipeCategoryModel> CategoryList { get; set; }
 
     /// <summary>
     /// Gets the menu.
@@ -50,13 +44,6 @@ public class WebsiteVM : IBaseViewModel
     /// <value>The page title.</value>
     [JsonPropertyName("page_title")]
     public string PageTitle { get; set; }
-
-    /// <summary>
-    /// Gets the recipe list.
-    /// </summary>
-    /// <value>The recipe list.</value>
-    [JsonPropertyName("recipes")]
-    public List<RecipeModel> RecipeList { get; set; }
     /// <summary>
     /// Gets or sets the site URL.
     /// </summary>

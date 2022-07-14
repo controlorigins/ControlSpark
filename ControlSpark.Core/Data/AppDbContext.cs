@@ -129,12 +129,6 @@ public partial class AppDbContext : DbContext
                .IsRequired()
                .HasMaxLength(150);
 
-           entity.HasOne(d => d.Domain)
-            .WithMany(p => p.Recipes)
-            .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("FK_Recipe_Domain")
-            .IsRequired();
-
            entity.HasOne(d => d.RecipeCategory)
                   .WithMany(p => p.Recipe)
                   .OnDelete(DeleteBehavior.Restrict)

@@ -31,15 +31,12 @@ public class MenuVM : WebsiteVM
         WebsiteName = domain.WebsiteName;
         WebsiteStyle = domain.WebsiteStyle;
         SiteUrl = domain.SiteUrl;
-        CategoryList = domain.CategoryList;
         MetaDescription = domain.MetaDescription;
         MetaKeywords = domain.MetaKeywords;
         PageTitle = domain.PageTitle;
-        RecipeList = domain.RecipeList;
         Menu = domain.Menu;
         StyleList = domain.StyleList;
         StyleUrl = domain.StyleUrl;
-
         Item = new MenuModel();
         ItemCollection = new List<MenuModel>();
         PageTitle = "Menu Maintenance";
